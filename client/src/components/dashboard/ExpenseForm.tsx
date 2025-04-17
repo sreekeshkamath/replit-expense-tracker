@@ -87,10 +87,12 @@ export default function ExpenseForm() {
   });
 
   const onSubmit = (data: ExpenseFormValues) => {
-    const numericAmount = Number(data.amount);
+    // Handle the Expense data to match the schema expected on the server
     mutate({
-      ...data,
-      amount: numericAmount,
+      amount: data.amount,  // Keep as string to match schema
+      category: data.category,
+      date: new Date(data.date), // Convert string date to Date object
+      description: data.description || "", // Ensure this is a string not null
       type: expenseType,
     });
   };
@@ -200,7 +202,11 @@ export default function ExpenseForm() {
                     <Textarea
                       placeholder="What was this for?"
                       className="resize-none"
-                      {...field}
+                      value={field.value || ''}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={field.ref}
                     />
                   </FormControl>
                   <FormMessage />

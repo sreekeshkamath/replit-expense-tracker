@@ -41,7 +41,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create a new expense
   app.post("/api/expenses", async (req: Request, res: Response) => {
     try {
-      const validatedData = insertExpenseSchema.parse(req.body);
+      // Log the received data for debugging
+      console.log('Received expense data:', req.body);
+      
+      // Create a custom validator that handles date conversion
+      const customExpenseSchema = z.object({
+        amount: z.string(), // Amount as string
+        category: z.string(),
+        date: z.union([
+          z.date(), // Accept Date objects directly
+          z.string().transform(val => new Date(val)), // Convert strings to Date
+        ]),
+        description: z.string().nullable().optional(),
+        type: z.string(),
+      });
+      
+      const validatedData = customExpenseSchema.parse(req.body);
       const expense = await storage.createExpense(validatedData);
       return res.status(201).json(expense);
     } catch (error) {
@@ -109,7 +124,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (expenses.length === 0) {
       // Add some sample expenses
       await storage.createExpense({
-        amount: 125.50,
+        amount: "125.50",
         category: "Food & Dining",
         date: new Date(today.getTime() - 3 * 24 * 60 * 60 * 1000),
         description: "Grocery Shopping",
@@ -117,7 +132,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       await storage.createExpense({
-        amount: 1200.00,
+        amount: "1200.00",
         category: "Housing",
         date: new Date(today.getTime() - 10 * 24 * 60 * 60 * 1000),
         description: "Rent Payment",
@@ -125,7 +140,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       await storage.createExpense({
-        amount: 4500.00,
+        amount: "4500.00",
         category: "Work",
         date: new Date(today.getTime() - 15 * 24 * 60 * 60 * 1000),
         description: "Salary Deposit",
@@ -133,7 +148,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       await storage.createExpense({
-        amount: 68.35,
+        amount: "68.35",
         category: "Food & Dining",
         date: new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000),
         description: "Restaurant Dinner",
@@ -141,7 +156,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       await storage.createExpense({
-        amount: 95.40,
+        amount: "95.40",
         category: "Utilities",
         date: new Date(today.getTime() - 5 * 24 * 60 * 60 * 1000),
         description: "Electricity Bill",
