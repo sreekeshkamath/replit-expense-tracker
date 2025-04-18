@@ -1,0 +1,31 @@
+# Node modules and dependencies
+node_modules
+npm-debug.log
+
+# Build outputs
+dist
+build
+.cache
+
+# Development files
+.git
+.github
+.gitignore
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+.DS_Store
+Thumbs.db
